@@ -6,7 +6,6 @@ A web application that analyzes Reddit sentiment and stock data for any given st
 - Analyze sentiment from Reddit posts **and comments**
 - Supports multiple subreddits: `stocks`, `investing`, `wallstreetbets`, `pennystocks`, `cryptostreetbets`, `options`, `SecurityAnalysis`, `StockMarket`
 - Configurable time duration (hour, day, week, month, year, all)
-- Adjustable number of posts and comments per post
 - Sentiment analysis for both posts and comments
 - Stock data integration (via Yahoo Finance)
 - Modern, responsive dashboard UI with dark/light mode
