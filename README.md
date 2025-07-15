@@ -76,7 +76,7 @@ stock/
 
 # Attribution & Credits
 
-This project is based on the original work by [Original Creator's Name](https://github.com/original-creator-username/repo-name). I would like to thank her for making the source code available and inspiring this project.
+This project is based on the original work by [TiffinTech's Reddit stock analysis](https://github.com/TiffinTech/stock). I would like to thank her for making the source code available and inspiring this project.
 
 I have made significant modifications and enhancements, including:
 - Expanding data sources (more subreddits, Reddit comments, etc.)
@@ -85,7 +85,7 @@ I have made significant modifications and enhancements, including:
 - Making the analysis parameters configurable
 - Additional bug fixes and optimizations
 
-If you are interested in the original version, please check out her repository [here](https://github.com/original-creator-username/repo-name).
+If you are interested in the original version, please check out her repository [here](https://github.com/TiffinTech/stock).
 
 ---
 
