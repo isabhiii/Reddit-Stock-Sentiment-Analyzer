@@ -12,14 +12,6 @@ A web application that analyzes Reddit sentiment and stock data for any given st
 - Modern, responsive dashboard UI with dark/light mode
 - Visualizations: sentiment distribution, trends, post quality, and more
 
-## Demo
-
-<!-- Place your screenshot or demo video here -->
-<p align="center">
-  <img src="demo_screenshot.png" alt="App Screenshot" width="600"/>
-  <!-- Or embed a video: <a href="https://youtu.be/your-demo-link"><img src="demo_thumbnail.png" alt="Demo Video" width="600"/></a> -->
-</p>
-
 ## Getting Started
 
 ### Prerequisites
@@ -44,7 +36,7 @@ A web application that analyzes Reddit sentiment and stock data for any given st
      REDDIT_CLIENT_SECRET=your_client_secret
      REDDIT_USER_AGENT=StockAnalyzer:v1.0
      ```
-
+     
 ## Usage
 1. **Run the application:**
    ```bash
