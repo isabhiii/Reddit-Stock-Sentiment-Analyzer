@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>Reddit Stock Sentiment Analyzer</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+            --accent-color: #007bff;
+            --positive-color: #28a745;
+            --negative-color: #dc3545;
+            --neutral-color: #ffc107;
+        }
+
+        [data-theme='dark'] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: #404040;
+            --accent-color: #0d6efd;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            background: var(--bg-secondary);
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .search-bar input,
+        .search-bar select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .post {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .post-meta {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .sentiment-emoji {
+            font-size: 1.2em;
+            margin-right: 8px;
+        }
+
+        .expand-button {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Reddit Stock Sentiment Analyzer</h1>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <span class="theme-icon">🌙</span>
+            <span>Dark Mode</span>
+        </button>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="stockSymbol" placeholder="Enter stock symbol (e.g., AAPL)" required>
+        <select id="timeFilter">
+            <option value="hour">Last Hour</option>
+            <option value="day">Last 24 Hours</option>
+            <option value="week">Last Week</option>
+            <option value="month">Last Month</option>
+            <option value="year">Last Year</option>
+            <option value="all">All Time</option>
+        </select>
+        <button onclick="analyze()">Analyze</button>
+    </div>
+
+    <div class="dashboard">
+        <div class="card">
+            <h3>Sentiment Distribution</h3>
+            <canvas id="sentimentChart"></canvas>
+        </div>
+        <div class="card">
+            <h3>Average Sentiment</h3>
+            <div id="avgSentiment" style="font-size: 2em; text-align: center;"></div>
+        </div>
+        <div class="card">
+            <h3>Stock Price</h3>
+            <div id="stockPrice" style="font-size: 2em; text-align: center;"></div>
+            <canvas id="sparkline"></canvas>
+        </div>
+    </div>
+
+    <h2>Top Reddit Posts</h2>
+    <div id="posts"></div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            
+            const icon = document.querySelector('.theme-icon');
+            icon.textContent = newTheme === 'light' ? '🌙' : '☀️';
+        }
+
+        let sentimentChart = null;
+        let sparklineChart = null;
+
+        async function analyze() {
+            const stockSymbol = document.getElementById('stockSymbol').value;
+            const timeFilter = document.getElementById('timeFilter').value;
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `stock_symbol=${stockSymbol}&time_filter=${timeFilter}`
+                });
+
+                const data = await response.json();
+                updateDashboard(data);
+                updatePosts(data.sentiment.top_posts);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function updateDashboard(data) {
+            // Update sentiment chart
+            const distribution = data.sentiment.sentiment_distribution;
+            if (sentimentChart) sentimentChart.destroy();
+            
+            sentimentChart = new Chart(document.getElementById('sentimentChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Negative'],
+                    datasets: [{
+                        data: [
+                            distribution.positive || 0,
+                            distribution.neutral || 0,
+                            distribution.negative || 0
+                        ],
+                        backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+                    }]
+                }
+            });
+
+            // Update average sentiment
+            const avgSentiment = (data.sentiment.average_sentiment * 100).toFixed(1);
+            const emoji = avgSentiment > 0 ? '😊' : avgSentiment < 0 ? '😟' : '😐';
+            document.getElementById('avgSentiment').innerHTML = `${avgSentiment}% ${emoji}`;
+
+            // Update stock price
+            document.getElementById('stockPrice').textContent = 
+                `${data.stock_data.data.currency}${data.stock_data.data.current_price.toFixed(2)}`;
+        }
+
+        function updatePosts(posts) {
+            const postsContainer = document.getElementById('posts');
+            postsContainer.innerHTML = posts.map(post => {
+                const sentiment = post.sentiment;
+                const emoji = sentiment > 0 ? '😊' : sentiment < 0 ? '😟' : '😐';
+                
+                return `
+                    <div class="post">
+                        <div class="post-header">
+                            <div>
+                                <span class="sentiment-emoji">${emoji}</span>
+                                <span class="post-title">${post.title}</span>
+                            </div>
+                            <button class="expand-button">Expand ▼</button>
+                        </div>
+                        <div class="post-meta">
+                            Score: ${post.score} | r/${post.subreddit} | ${post.created_utc}
+                        </div>
+                        <div class="post-content" style="display: none;">
+                            ${post.text}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Add click handlers for expand buttons
+            document.querySelectorAll('.expand-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const content = this.closest('.post').querySelector('.post-content');
+                    const isExpanded = content.style.display !== 'none';
+                    content.style.display = isExpanded ? 'none' : 'block';
+                    this.textContent = isExpanded ? 'Expand ▼' : 'Collapse ▲';
+                });
+            });
+        }
+    </script>
+</body>
+</html>
