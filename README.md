@@ -65,6 +65,18 @@ stock/
 │   │   └── index.html
 │   └── visualization/
 │       └── plotter.py
+├── assets/
+│   ├── images/
+│   │   └── demo_thumbnail.png
+│   └── videos/
+│       └── demo.mp4
+├── data/
+│   └── sample_data.csv
+├── tests/
+│   ├── test_app.py
+│   └── test_sentiment.py
+├── docs/
+│   └── usage.md
 └── stock_sentiment.py
 ```
 
