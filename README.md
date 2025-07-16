@@ -83,7 +83,7 @@ stock/
 ## Notes
 - The first analysis for a symbol may take longer due to Reddit API rate limits and comment fetching.
 - For best results, use valid Reddit API credentials and moderate post/comment limits.
-- You can customize the UI further in `src/templates/index.html`.#
+- You can customize the UI further in `src/templates/index.html`.
 
 # Attribution & Credits
 
