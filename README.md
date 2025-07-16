@@ -13,6 +13,9 @@ A web application that analyzes Reddit sentiment and stock data for any given st
 
 ## Getting Started
 
+## Demo Video
+https://github.com/user-attachments/assets/7d70aef7-ac26-4ecc-b710-a2c119cccc90
+
 ### Prerequisites
 - Python 3.8+
 - [pip](https://pip.pypa.io/en/stable/)
