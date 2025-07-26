@@ -11,8 +11,16 @@ A web application that analyzes Reddit sentiment and stock data for any given st
 - Modern, responsive dashboard UI with dark/light mode
 - Visualizations: sentiment distribution, trends, post quality, and more
 
-## Demo Video
-https://github.com/user-attachments/assets/7d70aef7-ac26-4ecc-b710-a2c119cccc90
+## In Latest version:
+https://github.com/user-attachments/assets/93c1d31e-a149-4a35-aa14-d5bf5971f86a
+
+<details>
+  <summary> Version 1.0 </summary>
+
+  ![V1.0](https://github.com/user-attachments/assets/7d70aef7-ac26-4ecc-b710-a2c119cccc90)
+
+</details>
+
 
 ## Getting Started
 
